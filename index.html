@@ -1,42 +1,694 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
- <link href='https://fonts.googleapis.com/css?family=Inter:400,700' rel='stylesheet' type='text/css' data-noprefix>
- <link href='https://fonts.googleapis.com/css?family=Lexend%20Deca:400,700' rel='stylesheet' type='text/css' data-noprefix>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="shortcut icon" href="img/favicon-32x32.png" type="image/x-icon">
-  <title>Stats preview card component</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CGS Mapping Prod Calculator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background: #f4f4f4;
+      text-align: center;
+    }
+    .content-container {
+      width: 70%;
+      max-width: 700px;
+      margin: 0 auto;
+    }
+    #topInputs, #resultsRow {
+      display: flex;
+      gap: 2rem;
+      justify-content: center;
+      margin-bottom: 1.5rem;
+      max-width: 700px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    #topInputs > div, #resultsRow > div {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 180px;
+    }
+    label {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 6px;
+      color: #333;
+      user-select: none;
+      text-align: center;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 1rem;
+      text-align: center;
+      border: 2px solid #4CAF50;
+      border-radius: 6px;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #333;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      outline-offset: 2px;
+      outline-color: transparent;
+      resize: vertical;
+      font-family: inherit;
+    }
+    input:focus, textarea:focus {
+      border-color: #45a049;
+      box-shadow: 0 0 6px rgba(69, 160, 73, 0.6);
+      outline-color: transparent;
+    }
+    #conditionalResultInput {
+      color: #007BFF;
+      font-size: 1.1rem;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      background-color: #fff;
+      margin-bottom: 1.5rem;
+      <!--table-layout: fixed;-->
+    }
+    th, td {
+      border: 1px solid #ddd;
+      <!--padding:6px;-->
+      text-align: center;
+      vertical-align: middle;
+      font-size: 12px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    th {
+	padding: 10px ;
+      background-color: #4CAF50;
+      color: white;
+      font-weight: bold;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #e0f7fa;
+    }
+    td input[type="text"] {
+      width: 50px !important;
+      padding: 4px 6px;
+      font-size: 1rem;
+      border: 2px solid #4CAF50;
+      border-radius: 4px;
+      text-align: center;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #333;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    td input[type="text"]:focus {
+      border-color: #45a049;
+      box-shadow: 0 0 6px rgba(69, 160, 73, 0.6);
+      outline-color: transparent;
+    }
+    #remarksContainer {
+      width: 630px;
+      margin: 1.5rem auto;
+      text-align: left;
+      background: #fff;
+      padding: 12px 14px;
+      border: 2px solid #4CAF50;
+      border-radius: 6px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+    }
+    #buttonsContainer {
+      max-width: 700px;
+      margin: 1.5rem auto 0;
+      text-align: center;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      margin-right: 1rem;
+    }
+    #checkBtn { background-color: #4CAF50; color: white; }
+    #checkBtn:hover { background-color: #45a049; }
+    #generateEmailBtn { background-color: #2196F3; color: white; }
+    #generateEmailBtn:hover { background-color: #1976d2; }
+    #resetBtn { background-color: #f44336; color: white; margin-right: 0; }
+    #resetBtn:hover { background-color: #d32f2f; }
+    @media (max-width: 520px) {
+      #topInputs, #resultsRow {
+        flex-direction: column;
+        align-items: center;
+      }
+      #topInputs > div, #resultsRow > div {
+        width: 100%;
+        max-width: 280px;
+      }
+      #buttonsContainer {
+        padding: 0 1rem;
+      }
+      #remarksContainer {
+        width: 90%;
+        max-width: 400px;
+      }
+      td input[type="text"] {
+        width: 45px !important;
+      }
+    }
+  </style>
 </head>
 <body>
+  <h2>CGS Mapping Prod Calculator</h2>
   
-  <div class="container">
-    <div class="grid">
-      <div class="content">
-
-        <div class="content-info">
-          <h1>Get <span>insight</span> that help your business grow.</h1>
-          <p>Discover the benefits of data analytics and make better decisions regarding revenue, customer experience, and overall efficiency.</p>
-
-          <div class="ratings">
-            <p>10K+ <span>Companies</span></p>
-            <p>314 <span>Templates</span></p>
-            <p>12M+ <span>Queries</span></p>
-          </div>
-
-        </div><!--content-info-->
-
-        <div class="img-banner">
-
-        <img src="img/image-header-desktop.jpg" alt="" class="img">
-
-         </div><!--img-banner-->   
-      </div><!--content-->
-    </div><!--grid-->
+  <!-- Top Inputs -->
+  <div id="topInputs" class="content-container">
+    <div>
+      <label for="dateInput">Date</label>
+      <input type="date" id="dateInput" />
+    </div>
+    <div>
+      <label for="fname">Full Name</label>
+      <input type="text" id="fname" placeholder="Enter your full name" autocomplete="off" />
+    </div>
+  </div>
+  
+ 
+  
+  <!-- Productivity Table -->
+  <div class="content-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Request Type</th>
+          <th># of Child Cases</th>
+		   <th>Average Handling Time</th>
+          <th>Productivity Hours</th>
+        </tr>
+      </thead>
+      <tbody>
+	<tr>
+		<td>New Master Estab Creation</td>
+			<td>
+				<input type="text" data-minutes="25" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:25:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+		
+	<tr>
+		<td>Content Update</td>
+			<td>
+				<input type="text" data-minutes="20" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:20:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	<tr>
+		<td>Linked Supplier</td>
+			<td>
+				<input type="text" data-minutes="10" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:10:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>New Master Room Creation</td>
+			<td>
+				<input type="text" data-minutes="35" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:35:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Linked Supplier Room</td>
+			<td>
+				<input type="text" data-minutes="25" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:25:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Room Content Update</td>
+			<td>
+				<input type="text" data-minutes="30" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:30:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+		<tr>
+		<td>Promote to Global</td>
+			<td>
+				<input type="text" data-minutes="05" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:05:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Content Correction</td>
+			<td>
+				<input type="text" data-minutes="15" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:15:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Published Notes</td>
+			<td>
+				<input type="text" data-minutes="10" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:10:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Update Location</td>
+			<td>
+				<input type="text" data-minutes="10" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:10:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Hotel name changed</td>
+			<td>
+				<input type="text" data-minutes="10" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:10:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Disable Estab</td>
+			<td>
+				<input type="text" data-minutes="07" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:07:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+		<tr>
+		<td>Enable Estab</td>
+			<td>
+				<input type="text" data-minutes="07" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:07:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+		<tr>
+		<td>Merge Estab</td>
+			<td>
+				<input type="text" data-minutes="20" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:20:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+		<tr>
+		<td>Extranet Content Moderation</td>
+			<td>
+				<input type="text" data-minutes="15" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:15:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+		<tr>
+		<td>Property Tagging</td>
+			<td>
+				<input type="text" data-minutes="15" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:15:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>New Location</td>
+			<td>
+				<input type="text" data-minutes="15" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:15:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Polygon</td>
+			<td>
+				<input type="text" data-minutes="30" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:30:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Escalation</td>
+			<td>
+				<input type="text" data-minutes="30" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:30:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+		<tr>
+		<td>Adhoc</td>
+			<td>
+				<input type="text" data-minutes="05" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:05:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	<tr>
+		<td>Create Location (province/country)</td>
+			<td>
+				<input type="text" data-minutes="10" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:10:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	<tr>
+		<td>Customer Moderation Feedback</td>
+			<td>
+				<input type="text" data-minutes="05" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:05:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Extranet Mapping</td>
+			<td>
+				<input type="text" data-minutes="35" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:35:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+	<tr>
+		<td>Amendment</td>
+			<td>
+				<input type="text" data-minutes="05" placeholder="Qty" />
+			</td>
+			<td>
+				<p>00:05:00</p>
+			</td>
+			<td>
+				<span class="handling-time-result"></span>
+			</td>
+	</tr>
+	
+      </tbody>
+    </table>
+  </div>
+   <!-- Remarks container -->
+  <div id="remarksContainer">
+    <label for="remarks">Remarks</label>
+    <textarea id="remarks" placeholder="Enter any remarks here..."></textarea>
+  </div>
+  
+  
+  <!-- Divisor, Average Hrs, Average Prod -->
+  <div id="resultsRow" class="content-container">
+    <div>
+      <label for="dayDivisor">Productive Hrs</label>
+      <input type="number" id="dayDivisor" min="0.1" step="0.01" value="7.5" placeholder="Enter Prod Hrs:" />
+    </div>
+    <div>
+      <label for="totalResult">Average Hrs</label>
+      <input type="text" id="totalResult" readonly placeholder="0.00" />
+    </div>
+    <div>
+      <label for="conditionalResultInput">Average Prod</label>
+      <input type="text" id="conditionalResultInput" readonly />
+    </div>
+  </div>
+  
+  <!-- Buttons container -->
+  <div id="buttonsContainer" class="content-container">
+    <button type="button" id="checkBtn">Calculate</button>
+    <button type="button" id="generateEmailBtn">Send EOD</button>
+    <button type="button" id="resetBtn">Reset</button>
   </div>
 
+  <script>
+// Helper: formats number to fixed 2 decimals
+function formatNumber(num) {
+  return Number(num).toFixed(2);
+}
+// Convert total minutes to hours.minutes string (e.g. 100 minutes -> "1.40")
+function minutesToHourMinute(totalMinutes) {
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+  return `${hours}.${formattedMinutes}`;
+}
+function updateAllHandlingTimes() {
+  const rows = document.querySelectorAll('table tbody tr');
+  rows.forEach(row => {
+    const qtyInput = row.querySelector('input[type="text"]');
+    const resultSpan = row.querySelector('.handling-time-result');
+    if (qtyInput && resultSpan) {
+      const qty = Number(qtyInput.value);
+      const minutesPerUnit = Number(qtyInput.getAttribute('data-minutes'));
+      if (!isNaN(qty) && qty > 0 && !isNaN(minutesPerUnit)) {
+        const totalMinutes = qty * minutesPerUnit;
+        resultSpan.textContent = minutesToHourMinute(totalMinutes);
+      } else {
+        resultSpan.textContent = '';
+      }
+    }
+  });
+}
+// Calculate total average & productivity for the summary inputs
+function performCalculation() {
+  const dateInput = document.getElementById('dateInput');
+  const fnameInput = document.getElementById('fname');
+  const totalResultInput = document.getElementById('totalResult');
+  const conditionalInput = document.getElementById('conditionalResultInput');
+  const divisorInput = document.getElementById('dayDivisor');
 
+  if (!dateInput.value) {
+    alert('Please select a date.');
+    dateInput.focus();
+    return false;
+  }
+  if (!fnameInput.value.trim()) {
+    alert('Please enter your full name.');
+    fnameInput.focus();
+    return false;
+  }
+  let divisorVal = parseFloat(divisorInput.value);
+  if (isNaN(divisorVal) || divisorVal <= 0) {
+    alert('Please enter a valid positive number for Productive Hrs.');
+    divisorInput.focus();
+    return false;
+  }
+  const qtyInputs = Array.from(document.querySelectorAll('table tbody input[type="text"]'));
+  if (!qtyInputs.some(input => input.value.trim() !== '')) {
+    alert('Please enter a value for at least one of the quantities before submitting.');
+    return false;
+  }
+
+  // Calculate total productivity hours (in hours)
+  let totalMinutes = 0;
+  qtyInputs.forEach(input => {
+    const qty = Number(input.value);
+    const minutesPerUnit = Number(input.getAttribute('data-minutes'));
+    if (!isNaN(qty) && qty > 0 && !isNaN(minutesPerUnit)) {
+      totalMinutes += qty * minutesPerUnit;
+    }
+  });
+  const totalHours = totalMinutes / 60;
+  totalResultInput.value = formatNumber(totalHours);
+
+  // Calculate Average Prod in percentage (e.g., 107%)
+  const averageProd = (totalHours / divisorVal) * 100;
+  conditionalInput.value = Math.round(averageProd) + '%';
+
+  return true;
+}
+// Prepare and generate email with entered data
+function generateEmailWithPrompt() {
+  if (!performCalculation()) return;
+  const dateInput = document.getElementById('dateInput');
+  const fnameInput = document.getElementById('fname');
+  const conditionalInput = document.getElementById('conditionalResultInput');
+  const remarksInput = document.getElementById('remarks');
+  const divisorInput = document.getElementById('dayDivisor');
+
+  // Format date to "Month day, year" (e.g., August 18, 2025)
+  const rawDate = dateInput.value; // "2025-08-18"
+  const dateObj = new Date(rawDate);
+  const options = { year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = dateObj.toLocaleDateString(undefined, options);
+
+  let emailBody = `Hi TL,\n\nPlease see below Daily Productivity:\n\n`;
+  emailBody += `Date: ${dateInput.value}\n`;
+  emailBody += `Full Name: ${fnameInput.value.trim()}\n\n`;
+  const remarksText = remarksInput.value.trim();
+  if (remarksText) {
+    emailBody += `Remarks:\n${remarksText}\n\n`;
+  }
+  emailBody += `Values:\n`;
+  const rows = Array.from(document.querySelectorAll('table tbody tr'));
+  rows.forEach(row => {
+    const requestType = row.cells[0].innerText.trim();
+    const qtyInput = row.querySelector('input[type="text"]');
+    if (qtyInput && qtyInput.value.trim() !== '') {
+      emailBody += `Request Type;- ${requestType}: = ${qtyInput.value.trim()}\n`;
+    }
+  });
+  emailBody += `\nAverage Productivity: ${conditionalInput.value}`;
+	  emailBody += 			`\nProductive Hours: ${dayDivisor.value} hrs/mins \n`;
+  const subject = encodeURIComponent(`${formattedDate} - EOD - ${fnameInput.value.trim()}`);
+  const body = encodeURIComponent(emailBody);
+  const mailtoLink = `mailto:?subject=${subject}&body=${body}`;
+  if (confirm('Do you want to send the email now?')) {
+    window.location.href = mailtoLink;
+  }
+}
+// Reset the form to initial empty state
+function resetForm() {
+  // Clear inputs for quantity fields
+  document.querySelectorAll('table tbody input[type="text"]').forEach(input => (input.value = ''));
+  // Clear handling time display spans
+  document.querySelectorAll('.handling-time-result').forEach(span => (span.textContent = ''));
+  // Clear other inputs
+  document.getElementById('dateInput').value = '';
+  document.getElementById('fname').value = '';
+  document.getElementById('dayDivisor').value = '7.5';
+  document.getElementById('remarks').value = '';
+  document.getElementById('totalResult').value = '';
+  document.getElementById('conditionalResultInput').value = '';
+}
+// Setup event listeners and auto set today's date on page load
+window.addEventListener('DOMContentLoaded', () => {
+  // Auto-set today as date input value
+  const dateInput = document.getElementById('dateInput');
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  let mm = today.getMonth() + 1;
+  let dd = today.getDate();
+  if (mm < 10) mm = '0' + mm;
+  if (dd < 10) dd = '0' + dd;
+  dateInput.value = `${yyyy}-${mm}-${dd}`;
+  // Attach input event to qty inputs to update handling times dynamically
+  const qtyInputs = document.querySelectorAll('table tbody input[type="text"]');
+  qtyInputs.forEach(input => {
+    input.addEventListener('input', updateAllHandlingTimes);
+  });
+  // Attach button click handlers
+  document.getElementById('checkBtn').addEventListener('click', performCalculation);
+  document.getElementById('generateEmailBtn').addEventListener('click', generateEmailWithPrompt);
+  document.getElementById('resetBtn').addEventListener('click', resetForm);
+  // Initial call to clear handling times
+  updateAllHandlingTimes();
+});
+
+  </script>
 </body>
 </html>
