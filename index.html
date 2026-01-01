@@ -31,7 +31,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 180px;
+      width: 200px;
     }
     label {
       font-weight: 600;
@@ -163,8 +163,8 @@
         width: 45px !important;
       }
     }
-	#logo-santa {
-		height: 150px;
+	#mapping-logo {
+		height: 80px;
 		
 		maargin-bottom: -120px;
 	}
@@ -182,7 +182,7 @@
     text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
     animation: diagonal-scroll 10s linear infinite;
 }
-
+<!--
 /* Santa image bounce */
 #logo {
    max-height: 250px;
@@ -208,16 +208,16 @@
     100% {
         transform: translateY(-50px);
     }
-}
+}-->
   </style>
 </head>
 <body>
 <div class="logo-top">
-<img id="logo-santa" src="xmaslogo.png" alt="CGS Xmas Logo" />
+<img id="mapping-logo" src="mapping-logo.png" alt="CGS Xmas Logo" />
 </div>
-	<div class="marquee" scrollamount="20">
+	<!--<div class="marquee" scrollamount="20">
           <img id="logo" src="santa.png" alt="CGS Xmas Logo" />
-    </div>
+    </div>-->
   <h2>CGS Mapping Prod Calculator</h2>
   
   <!-- Top Inputs -->
@@ -285,43 +285,32 @@
 	</tr>
 	
 	<tr>
-		<td>New Master Room Creation</td>
-			<td>
-				<input type="text" data-minutes="35" placeholder="Qty" />
-			</td>
-			<td>
-				<p>00:35:00</p>
-			</td>
-			<td>
-				<span class="handling-time-result"></span>
-			</td>
-	</tr>
-	
-	<tr>
-		<td>Linked Supplier Room</td>
-			<td>
-				<input type="text" data-minutes="25" placeholder="Qty" />
-			</td>
-			<td>
-				<p>00:25:00</p>
-			</td>
-			<td>
-				<span class="handling-time-result"></span>
-			</td>
-	</tr>
-	
-	<tr>
-		<td>Room Content Update</td>
-			<td>
-				<input type="text" data-minutes="30" placeholder="Qty" />
-			</td>
-			<td>
-				<p>00:30:00</p>
-			</td>
-			<td>
-				<span class="handling-time-result"></span>
-			</td>
-	</tr>
+  <td>New Master Room Creation <br>(<p style="color: rgba(33, 150, 243, 1); display: contents;">Count of Master Rooms Update</p>)</td>
+  <td>
+    <input type="text" data-minutes="4" data-seconds="11" placeholder="Qty" />
+  </td>
+  <td><p>00:04:11</p></td>
+  <td><span class="handling-time-result"></span></td>
+</tr>
+
+<tr>
+  <td>Linked Supplier Room <br>(<p style="color: rgba(33, 150, 243, 1); display: contents;">Count of Supplier Rooms Update</p>)</td>
+  <td>
+    <input type="text" data-minutes="0" data-seconds="30" placeholder="Qty" />
+  </td>
+  <td><p>00:00:30</p></td>
+  <td><span class="handling-time-result"></span></td>
+</tr>
+
+<tr>
+  <td>Room Content Update <br>(<p style="color: rgba(33, 150, 243, 1); display: contents;">Count of Master Rooms Update</p>)</td>
+  <td>
+    <input type="text" data-minutes="4" data-seconds="10" placeholder="Qty" />
+  </td>
+  <td><p>00:04:10</p></td>
+  <td><span class="handling-time-result"></span></td>
+</tr>
+
 	
 		<tr>
 		<td>Promote to Global</td>
@@ -503,56 +492,7 @@
 				<span class="handling-time-result"></span>
 			</td>
 	</tr>
-	<!--<tr>
-		<td>Create Location (province/country)</td>
-			<td>
-				<input type="text" data-minutes="10" placeholder="Qty" />
-			</td>
-			<td>
-				<p>00:10:00</p>
-			</td>
-			<td>
-				<span class="handling-time-result"></span>
-			</td>
-	</tr>
-	<tr>
-		<td>Customer Moderation Feedback</td>
-			<td>
-				<input type="text" data-minutes="05" placeholder="Qty" />
-			</td>
-			<td>
-				<p>00:05:00</p>
-			</td>
-			<td>
-				<span class="handling-time-result"></span>
-			</td>
-	</tr>
 	
-	<tr>
-		<td>Extranet Mapping</td>
-			<td>
-				<input type="text" data-minutes="35" placeholder="Qty" />
-			</td>
-			<td>
-				<p>00:35:00</p>
-			</td>
-			<td>
-				<span class="handling-time-result"></span>
-			</td>
-	</tr>
-	
-	<tr>
-		<td>Amendment</td>
-			<td>
-				<input type="text" data-minutes="05" placeholder="Qty" />
-			</td>
-			<td>
-				<p>00:05:00</p>
-			</td>
-			<td>
-				<span class="handling-time-result"></span>
-			</td>
-	</tr>-->
 	
       </tbody>
     </table>
@@ -617,6 +557,28 @@ function updateAllHandlingTimes() {
   });
 }
 // Calculate total average & productivity for the summary inputs
+function updateAllHandlingTimes() {
+  const rows = document.querySelectorAll('table tbody tr');
+  rows.forEach(row => {
+    const qtyInput = row.querySelector('input[type="text"]');
+    const resultSpan = row.querySelector('.handling-time-result');
+    if (qtyInput && resultSpan) {
+      const qty = Number(qtyInput.value);
+      const minutesPerUnit = Number(qtyInput.getAttribute('data-minutes')) || 0;
+      const secondsPerUnit = Number(qtyInput.getAttribute('data-seconds')) || 0;
+      if (!isNaN(qty) && qty > 0) {
+        const totalSeconds = qty * (minutesPerUnit * 60 + secondsPerUnit);
+        const hours = Math.floor(totalSeconds / 3600);
+        const minutes = Math.floor((totalSeconds % 3600) / 60);
+        const seconds = totalSeconds % 60;
+        resultSpan.textContent = `${hours}:${minutes.toString().padStart(2,'0')}:${seconds.toString().padStart(2,'0')}`;
+      } else {
+        resultSpan.textContent = '';
+      }
+    }
+  });
+}
+
 function performCalculation() {
   const dateInput = document.getElementById('dateInput');
   const fnameInput = document.getElementById('fname');
@@ -646,24 +608,23 @@ function performCalculation() {
     return false;
   }
 
-  // Calculate total productivity hours (in hours)
-  let totalMinutes = 0;
+  let totalSeconds = 0;
   qtyInputs.forEach(input => {
     const qty = Number(input.value);
-    const minutesPerUnit = Number(input.getAttribute('data-minutes'));
-    if (!isNaN(qty) && qty > 0 && !isNaN(minutesPerUnit)) {
-      totalMinutes += qty * minutesPerUnit;
+    const minutesPerUnit = Number(input.getAttribute('data-minutes')) || 0;
+    const secondsPerUnit = Number(input.getAttribute('data-seconds')) || 0;
+    if (!isNaN(qty) && qty > 0) {
+      totalSeconds += qty * (minutesPerUnit * 60 + secondsPerUnit);
     }
   });
-  const totalHours = totalMinutes / 60;
-  totalResultInput.value = formatNumber(totalHours);
 
-  // Calculate Average Prod in percentage (e.g., 107%)
+  const totalHours = totalSeconds / 3600;
+  totalResultInput.value = totalHours.toFixed(2);
   const averageProd = (totalHours / divisorVal) * 100;
   conditionalInput.value = Math.round(averageProd) + '%';
-
   return true;
 }
+
 // Prepare and generate email with entered data
 function generateEmailWithPrompt() {
   if (!performCalculation()) return;
@@ -745,7 +706,6 @@ window.addEventListener('DOMContentLoaded', () => {
   </script>
 </body>
 </html>
-
 
 
 
