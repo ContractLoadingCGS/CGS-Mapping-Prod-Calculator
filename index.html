@@ -416,40 +416,34 @@
 
     // FIXED MODAL FUNCTIONS WITH IMAGE PATH DEBUGGING
     function showProdModal(averageProd) {
-      const modal = document.getElementById('prodModal');
-      const prodImage = document.getElementById('prodImage');
-      const prodMessage = document.getElementById('prodMessage');
+  const modal = document.getElementById('prodModal');
+  const prodImage = document.getElementById('prodImage');
+  const prodMessage = document.getElementById('prodMessage');
 
-      prodImage.classList.remove('error');
-      prodImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7'; // Clear
+  // 🛡️ SUPER SAFE: Round to nearest whole number first
+  const roundedProd = Math.round(averageProd * 10) / 10; // 1 decimal precision
+  console.log('Raw averageProd:', averageProd);
+  console.log('Rounded averageProd:', roundedProd);
 
-      if (averageProd >= 100) {
-        prodImage.src = 'image1.png';  // TRY THESE PATHS ONE BY ONE:
-        // prodImage.src = './image1.png';
-        // prodImage.src = 'images/image1.png';
-        prodMessage.textContent = '🎉 Excellent! Average Productivity ≥ 100%';
-        prodMessage.style.color = '#4CAF50';
-      } else {
-        prodImage.src = 'image2.png';  // TRY THESE PATHS ONE BY ONE:
-        // prodImage.src = './image2.png';
-        // prodImage.src = 'images/image2.png';
-        prodMessage.textContent = `📉 Needs Improvement: ${Math.round(averageProd)}%`;
-        prodMessage.style.color = '#f44336';
-      }
+  prodImage.classList.remove('error');
+  prodImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
 
-      // DEBUG IMAGE LOADING
-      prodImage.onload = () => {
-        console.log('✅ MODAL IMAGE LOADED:', prodImage.src);
-      };
-      prodImage.onerror = () => {
-        console.log('❌ MODAL IMAGE FAILED:', prodImage.src);
-        prodImage.classList.add('error');
-        prodImage.alt = 'Image not found - check filename & location';
-      };
+  if (roundedProd >= 99.50) {
+    prodImage.src = 'image1.png';
+    prodMessage.textContent = `🎉 Excellent! Average Productivity ≥ 100%`;
+    prodMessage.style.color = '#4CAF50';
+  } else {
+    prodImage.src = 'image2.png';
+    prodMessage.textContent = `📉 Needs Improvement: ${Math.round(roundedProd)}%`;
+    prodMessage.style.color = '#f44336';
+  }
 
-      modal.style.display = 'block';
-    }
+  prodImage.onload = () => console.log('✅ IMAGE LOADED');
+  prodImage.onerror = () => console.log('❌ IMAGE FAILED');
+  
+  modal.style.display = 'block';
 
+}
     function closeProdModal() {
       document.getElementById('prodModal').style.display = 'none';
     }
@@ -594,3 +588,4 @@
   </script>
 </body>
 </html>
+
